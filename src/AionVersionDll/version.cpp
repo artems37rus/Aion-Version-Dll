@@ -16,6 +16,9 @@ static bool s_needPatch = false;
 static bool s_gfxEnabled = false;
 bool g_didStartup = false;
 bool g_disableIpFix = false;
+//The inclusion of the sub servers
+static bool sub_server1 = false;
+static bool sub_server2 = false;
 
 bool g_isCursorHidden = false;
 bool g_windowedMousefixOnly = false;
@@ -96,6 +99,18 @@ zzlstrcpynA(
     _In_ LPCSTR lpString2,
     _In_ int iMaxLength
 ) {
+    //Sub Server 1
+    if (!strcmp(lpString2, "127.0.0.1") && sub_server1) {
+        s_needPatch = false;
+        return real_lstrcpynA(lpString1, s_ipToReplace, iMaxLength);
+    }
+
+    //Sub Server 2
+    if (!strcmp(lpString2, "127.0.0.2") && sub_server2) {
+        s_needPatch = false;
+        return real_lstrcpynA(lpString1, s_ipToReplace, iMaxLength);
+    }
+
     if (s_needPatch) {
         if (!strcmp(lpString2, s_serverIp)) {
             s_needPatch = false;
